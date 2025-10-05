@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Host Screen</title>
+</head>
+<body>
+  <h1>Share Your Screen</h1>
+  <button id="shareBtn">Share Screen</button>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const shareBtn = document.getElementById('shareBtn');
+
+    shareBtn.onclick = async () => {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const pc = new RTCPeerConnection();
+      stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+      pc.onicecandidate = e => {
+        if (e.candidate) socket.emit('candidate', e.candidate);
+      };
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      socket.emit('offer', offer);
+
+      socket.on('answer', async answer => {
+        await pc.setRemoteDescription(answer);
+      });
+
+      socket.on('candidate', async candidate => {
+        try { await pc.addIceCandidate(candidate); } catch {}
+      });
+    };
+  </script>
+</body>
+</html>
