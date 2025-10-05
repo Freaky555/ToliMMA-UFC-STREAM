@@ -1,6 +1,6 @@
 {
   "name": "screenshare-render",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "server.js",
   "scripts": {
@@ -9,5 +9,6 @@
   "dependencies": {
     "express": "^4.19.2",
     "socket.io": "^4.7.2"
-  }
+  },
+  "license": "MIT"
 }
